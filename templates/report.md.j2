@@ -1,0 +1,51 @@
+# ctfrecon Report — {{ target.address }}
+
+**Generated:** {{ generated_at }}
+
+---
+
+## Summary
+
+| Field | Value |
+|-------|-------|
+| Target | `{{ target.address }}` |
+| Open Ports | {{ services | length }} |
+| Findings | {{ findings | length }} |
+| Completed Plugins | {{ completed_plugins | length }} |
+
+---
+
+## Open Ports & Services
+
+{% if services %}
+| Port | Protocol | Service | Product | Version |
+|------|----------|---------|---------|---------|
+{% for s in services %}| {{ s.port }} | {{ s.protocol }} | {{ s.name }}{% if s.secure %} (TLS){% endif %} | {{ s.product or "—" }} | {{ s.version or "—" }} |
+{% endfor %}
+{% else %}
+*No services discovered.*
+{% endif %}
+
+---
+
+## Findings
+
+{% if findings %}
+{% for f in findings %}
+- {{ f }}
+{% endfor %}
+{% else %}
+*No findings recorded.*
+{% endif %}
+
+---
+
+## Completed Plugins
+
+{% if completed_plugins %}
+{% for p in completed_plugins %}
+- `{{ p }}`
+{% endfor %}
+{% else %}
+*None.*
+{% endif %}

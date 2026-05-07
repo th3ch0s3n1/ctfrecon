@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ctfrecon — {{ target.address }}</title>
+<style>
+  :root { --bg: #0d1117; --surface: #161b22; --border: #30363d; --accent: #58a6ff; --green: #3fb950; --yellow: #d29922; --red: #f85149; --text: #e6edf3; --muted: #8b949e; }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--bg); color: var(--text); font-family: 'Segoe UI', system-ui, sans-serif; padding: 2rem; line-height: 1.6; }
+  h1 { color: var(--accent); font-size: 1.8rem; margin-bottom: 0.25rem; }
+  h2 { color: var(--accent); font-size: 1.2rem; margin: 2rem 0 0.75rem; border-bottom: 1px solid var(--border); padding-bottom: 0.4rem; }
+  .meta { color: var(--muted); font-size: 0.85rem; margin-bottom: 2rem; }
+  .summary-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 1rem; margin-bottom: 1rem; }
+  .card { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 1rem; text-align: center; }
+  .card .value { font-size: 2rem; font-weight: bold; color: var(--green); }
+  .card .label { font-size: 0.8rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.05em; }
+  table { width: 100%; border-collapse: collapse; background: var(--surface); border-radius: 8px; overflow: hidden; margin-bottom: 1rem; }
+  th { background: var(--border); color: var(--muted); text-transform: uppercase; font-size: 0.75rem; letter-spacing: 0.05em; padding: 0.6rem 1rem; text-align: left; }
+  td { padding: 0.6rem 1rem; border-top: 1px solid var(--border); font-size: 0.9rem; }
+  tr:hover td { background: rgba(88,166,255,0.05); }
+  .port { color: var(--accent); font-weight: bold; font-family: monospace; }
+  .service { color: var(--green); font-family: monospace; }
+  .version { color: var(--muted); font-family: monospace; font-size: 0.85rem; }
+  .tls-badge { background: var(--green); color: #000; font-size: 0.65rem; padding: 1px 5px; border-radius: 4px; margin-left: 4px; font-weight: bold; }
+  .findings-list { list-style: none; padding: 0; }
+  .findings-list li { background: var(--surface); border: 1px solid var(--border); border-left: 3px solid var(--yellow); border-radius: 4px; padding: 0.5rem 0.75rem; margin-bottom: 0.4rem; font-family: monospace; font-size: 0.85rem; word-break: break-all; }
+  .plugins-list { display: flex; flex-wrap: wrap; gap: 0.4rem; }
+  .plugin-tag { background: var(--surface); border: 1px solid var(--border); border-radius: 4px; padding: 0.2rem 0.6rem; font-family: monospace; font-size: 0.8rem; color: var(--muted); }
+  .empty { color: var(--muted); font-style: italic; }
+</style>
+</head>
+<body>
+
+<h1>ctfrecon &mdash; {{ target.address }}</h1>
+<p class="meta">Generated: {{ generated_at }}</p>
+
+<h2>Summary</h2>
+<div class="summary-grid">
+  <div class="card"><div class="value">{{ services | length }}</div><div class="label">Open Ports</div></div>
+  <div class="card"><div class="value">{{ findings | length }}</div><div class="label">Findings</div></div>
+  <div class="card"><div class="value">{{ completed_plugins | length }}</div><div class="label">Plugins Run</div></div>
+</div>
+
+<h2>Open Ports &amp; Services</h2>
+{% if services %}
+<table>
+  <thead><tr><th>Port</th><th>Protocol</th><th>Service</th><th>Product</th><th>Version</th></tr></thead>
+  <tbody>
+  {% for s in services %}
+  <tr>
+    <td class="port">{{ s.port }}</td>
+    <td>{{ s.protocol }}</td>
+    <td class="service">{{ s.name }}{% if s.secure %}<span class="tls-badge">TLS</span>{% endif %}</td>
+    <td>{{ s.product or "—" }}</td>
+    <td class="version">{{ s.version or "—" }}</td>
+  </tr>
+  {% endfor %}
+  </tbody>
+</table>
+{% else %}
+<p class="empty">No services discovered.</p>
+{% endif %}
+
+<h2>Findings</h2>
+{% if findings %}
+<ul class="findings-list">
+{% for f in findings %}
+  <li>{{ f }}</li>
+{% endfor %}
+</ul>
+{% else %}
+<p class="empty">No findings recorded.</p>
+{% endif %}
+
+<h2>Completed Plugins</h2>
+{% if completed_plugins %}
+<div class="plugins-list">
+{% for p in completed_plugins %}
+  <span class="plugin-tag">{{ p }}</span>
+{% endfor %}
+</div>
+{% else %}
+<p class="empty">None.</p>
+{% endif %}
+
+</body>
+</html>
