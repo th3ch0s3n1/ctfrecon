@@ -45,7 +45,7 @@ class SearchsploitScan(ServiceScan):
         scandir = Path(target.scandir)
         outfile = scandir / f"searchsploit_{service.port}.txt"
 
-        cmd = f'searchsploit --colour "{query}" 2>&1 | tee "{outfile}"'
+        cmd = f'searchsploit "{query}" 2>&1 | tee "{outfile}"'
 
         process, stdout, _ = await scanner.execute(
             cmd, target, tag=f"searchsploit:{service.port}", outfile=outfile
